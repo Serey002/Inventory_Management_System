@@ -1,16 +1,16 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 
-import { Role } from "../Entity/Role";
-import { User } from "../Entity/User";
-import { Category } from "../Entity/Category";
-import { Supplier } from "../Entity/Supplier";
-import { Warehouse } from "../Entity/Warehouse";
-import { Product } from "../Entity/Product";
-import { Inventory } from "../Entity/Inventory";
-import { StockMovement } from "../Entity/StockMovement";
-import { Sale } from "../Entity/Sale";
-import { SaleItem } from "../Entity/SaleItem";
+import { Role } from "../Entities/Role";
+import { User } from "../Entities/User";
+import { Category } from "../Entities/Category";
+import { Supplier } from "../Entities/Supplier";
+import { Warehouse } from "../Entities/Warehouse";
+import { Product } from "../Entities/Product";
+import { Inventory } from "../Entities/Inventory";
+import { StockMovement } from "../Entities/StockMovement";
+import { Sale } from "../Entities/Sale";
+import { SaleItem } from "../Entities/SaleItem";
 
 export const AppDataSource = new DataSource({
   type: "mysql",

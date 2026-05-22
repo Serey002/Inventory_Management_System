@@ -1,26 +1,26 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 
-import { Roles } from "../Entity/Roles";
-import { Users } from "../Entity/Users";
-import { Categories } from "../Entity/Categories";
-import { Supplier } from "../Entity/Supplier";
-import { Warehouse } from "../Entity/Warehouse";
-import { Products } from "../Entity/Products";
-import { Inventories } from "../Entity/Inventories";
-import { StockMovement } from "../Entity/StockMovement";
-import { Sale } from "../Entity/Sale";
-import { SaleItem } from "../Entity/SaleItem";
+import { Roles } from "../Entities/Roles";
+import { Users } from "../Entities/Users";
+import { Categories } from "../Entities/Categories";
+import { Supplier } from "../Entities/Supplier";
+import { Warehouse } from "../Entities/Warehouse";
+import { Products } from "../Entities/Products";
+import { Inventories } from "../Entities/Inventories";
+import { StockMovement } from "../Entities/StockMovement";
+import { Sale } from "../Entities/Sale";
+import { SaleItem } from "../Entities/SaleItem";
+
+
 
 export const AppDataSource = new DataSource({
   type: "mysql",
-
-  host: process.env.DB_HOST || "localhost",
-  port: Number(process.env.DB_PORT) || 3306,
-  username: process.env.DB_USER || "root",
-  password: process.env.DB_PASS || "",
-  database: process.env.DB_NAME || "ims_db",
-
+  host: "localhost",
+  port: 3306,
+  username: "root",
+  password: "",
+  database: "ims_db",
   synchronize: true,
   logging: false,
 
@@ -36,5 +36,4 @@ export const AppDataSource = new DataSource({
     Sale,
     SaleItem,
   ],
-
 });

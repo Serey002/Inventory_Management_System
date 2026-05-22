@@ -1,26 +1,41 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import {
+  Entity, PrimaryGeneratedColumn, Column,
+  CreateDateColumn, ManyToOne, JoinColumn
+} from "typeorm";
 import { Sale } from "./Sale";
 import { Products } from "./Products";
 
-@Entity()
+@Entity("sale_items")
 export class SaleItem {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Sale)
+  @ManyToOne(() => Sale, (sale) => sale.items, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "saleId" })
   sale!: Sale;
 
-  @ManyToOne(() => Products)
+  @Column()
+  saleId!: number;
+
+  @ManyToOne(() => Products, (product) => product.saleItems, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "productId" })
   product!: Products;
 
   @Column()
+  productId!: number;
+
+  @Column({ type: "int" })
   quantity!: number;
 
-  @Column("decimal")
-  price!: number;
+  @Column({ type: "decimal", precision: 10, scale: 2 })
+  unitPrice!: number;
 
-  @Column("decimal")
+  @Column({ type: "decimal", precision: 10, scale: 2, default: 0 })
+  discount!: number;
+
+  @Column({ type: "decimal", precision: 10, scale: 2 })
   subtotal!: number;
-}
 
-export default SaleItem
+  @CreateDateColumn()
+  createdAt!: Date;
+}

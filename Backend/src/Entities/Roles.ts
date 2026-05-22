@@ -1,14 +1,28 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import {
+  Entity, PrimaryGeneratedColumn, Column,
+  CreateDateColumn, UpdateDateColumn, OneToMany
+} from "typeorm";
 import { Users } from "./Users";
 
-@Entity()
+@Entity("roles")
 export class Roles {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ unique: true })
+  @Column({ type: "varchar", length: 50, unique: true })
   name!: string;
 
-  @OneToMany(() => Users, (users) => users.role)
+  @Column({ type: "text", nullable: true })
+  description!: string;
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
+
+  @OneToMany(() => Users, (user) => user.role)
   users!: Users[];
 }
+
+export default Roles;

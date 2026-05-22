@@ -1,11 +1,15 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, UpdateDateColumn, OneToMany
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
 } from "typeorm";
 import { Users } from "./Users";
 
 @Entity("roles")
-export class Roles {
+export class Role {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -25,4 +29,4 @@ export class Roles {
   users!: Users[];
 }
 
-export default Roles;
+export default Role;

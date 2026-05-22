@@ -1,16 +1,14 @@
 import { Router } from "express";
 import { AuthController } from "../controllers/AuthController";
-import { authMiddleware } from "../middlewares/authMiddleware";
+import { createAuthMiddleware } from "../middlewares/authMiddleware";
+import { AuthService } from "../services/AuthService";
 
-export function createAuthRouter(authController: AuthController): Router {
+export function createAuthRouter(authController: AuthController, authService: AuthService): Router {
   const router = Router();
+  const authMiddleware = createAuthMiddleware(authService);
 
-  // Public routes
   router.post("/login", authController.login);
   router.post("/register", authController.register);
-
-  // Protected routes
-  router.get("/profile", authMiddleware, authController.getProfile);
 
   return router;
 }

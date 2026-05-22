@@ -25,3 +25,5 @@ export abstract class BaseRepository<T extends ObjectLiteral & { id: number }> {
     await this.repository.delete(id);
   }
 }
+
+export default BaseRepository;

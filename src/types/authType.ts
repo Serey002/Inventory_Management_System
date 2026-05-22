@@ -27,7 +27,6 @@ export interface AuthResult {
   };
 }
 
-// Extend Express Request to include user
 declare global {
   namespace Express {
     interface Request {

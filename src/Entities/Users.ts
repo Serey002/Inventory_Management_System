@@ -1,9 +1,14 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, UpdateDateColumn,
-  ManyToOne, JoinColumn, OneToMany
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
 } from "typeorm";
-import { Roles } from "./Roles";
+import { Role } from "./Roles";
 import { Sale } from "./Sale";
 import { StockMovement } from "./StockMovement";
 
@@ -30,9 +35,13 @@ export class Users {
   @Column({ type: "datetime", nullable: true })
   lastLoginAt!: Date;
 
-  @ManyToOne(() => Roles, (role) => role.users, { nullable: true, onDelete: "SET NULL", eager: true })
+  @ManyToOne(() => Role, (role) => role.users, {
+    nullable: true,
+    onDelete: "SET NULL",
+    eager: true,
+  })
   @JoinColumn({ name: "roleId" })
-  role!: Roles;
+  role!: Role;
 
   @Column({ nullable: true })
   roleId!: number;

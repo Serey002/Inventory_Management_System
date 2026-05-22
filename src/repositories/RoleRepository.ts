@@ -1,14 +1,13 @@
 import { DataSource } from "typeorm";
 import { BaseRepository } from "./BaseRepository";
-import { Roles } from "../entities/Roles";
+import { Role } from "../Entities/Roles";
 
-
-export class RoleRepository extends BaseRepository<Roles> {
+export class RoleRepository extends BaseRepository<Role> {
   constructor(dataSource: DataSource) {
-    super(Roles, dataSource);
+    super(Role, dataSource);
   }
 
-  async findByName(name: string): Promise<Roles | null> {
+  async findByName(name: string): Promise<Role | null> {
     return this.repository.findOne({ where: { name } });
   }
 }

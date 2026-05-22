@@ -2,16 +2,16 @@ import "reflect-metadata";
 import dotenv from "dotenv";
 import { DataSource } from "typeorm";
 
-import { Roles } from "../entities/Roles";
-import { Users } from "../entities/Users";
-import { Categories } from "../entities/Categories";
-import { Supplier } from "../entities/Supplier";
-import { Warehouse } from "../entities/Warehouse";
-import { Products } from "../entities/Products";
-import { Inventories } from "../entities/Inventories";
-import { StockMovement } from "../entities/StockMovement";
-import { Sale } from "../entities/Sale";
-import { SaleItem } from "../entities/SaleItem";
+import { Role } from "../Entities/Roles";
+import { Users } from "../Entities/Users";
+import { Categories } from "../Entities/Categories";
+import { Supplier } from "../Entities/Supplier";
+import { Warehouse } from "../Entities/Warehouse";
+import { Products } from "../Entities/Products";
+import { Inventories } from "../Entities/Inventories";
+import { StockMovement } from "../Entities/StockMovement";
+import { Sale } from "../Entities/Sale";
+import { SaleItem } from "../Entities/SaleItem";
 
 // Load environment variables
 dotenv.config();
@@ -28,7 +28,7 @@ export const AppDataSource = new DataSource({
   dropSchema: false,
 
   entities: [
-    Roles,
+    Role,
     Users,
     Categories,
     Supplier,

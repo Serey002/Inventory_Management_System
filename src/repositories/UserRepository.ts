@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
 import { BaseRepository } from "./BaseRepository";
-import { Users } from "../entities/Users";
+import { Users } from "../Entities/Users";
 
 export class UserRepository extends BaseRepository<Users> {
   constructor(dataSource: DataSource) {
@@ -22,8 +22,7 @@ export class UserRepository extends BaseRepository<Users> {
   }
 
   async emailExists(email: string): Promise<boolean> {
-    const count = await this.repository.count({ where: { email } });
-    return count > 0;
+    return this.repository.existsBy({ email });
   }
 }
 

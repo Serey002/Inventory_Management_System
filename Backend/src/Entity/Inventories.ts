@@ -1,14 +1,14 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { Product } from "./Product";
+import { Products } from "./Products";
 import { Warehouse } from "./Warehouse";
 
 @Entity()
-export class Inventory {
+export class Inventories {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Product)
-  product!: Product;
+  @ManyToOne(() => Products)
+  product!: Products;
 
   @ManyToOne(() => Warehouse)
   warehouse!: Warehouse;
@@ -17,4 +17,4 @@ export class Inventory {
   quantity!: number;
 }
 
-export default Inventory;
+export default Inventories;

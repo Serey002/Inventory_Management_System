@@ -1,15 +1,15 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from "typeorm";
-import { Product } from "./Product";
+import { Products } from "./Products";
 import { Warehouse } from "./Warehouse";
-import { User } from "./User";
+import { Users } from "./Users";
 
 @Entity()
 export class StockMovement {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Product)
-  product!: Product;
+  @ManyToOne(() => Products)
+  product!: Products;
 
   @ManyToOne(() => Warehouse)
   warehouse!: Warehouse;
@@ -20,8 +20,8 @@ export class StockMovement {
   @Column()
   quantity!: number;
 
-  @ManyToOne(() => User)
-  user!: User;
+  @ManyToOne(() => Users)
+  user!: Users;
 
   @CreateDateColumn()
   created_at!: Date;

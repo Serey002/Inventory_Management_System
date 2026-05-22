@@ -1,16 +1,16 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { User } from "./User";
+import { Products } from "./Products";
 
 @Entity()
-export class Role {
+export class Categories {
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column({ unique: true })
   name!: string;
 
-  @OneToMany(() => User, (user) => user.role)
-  users!: User[];
+  @OneToMany(() => Products, (product) => product.category)
+  products!: Products[];
 }
 
-export default Role;
+export default Categories;

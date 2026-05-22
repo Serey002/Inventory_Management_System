@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { Inventory } from "./Inventory";
+import { Inventories } from "./Inventories";
 import { StockMovement } from "./StockMovement";
 
 @Entity()
@@ -13,8 +13,8 @@ export class Warehouse {
   @Column()
   location!: string;
 
-  @OneToMany(() => Inventory, (inv) => inv.warehouse)
-  inventories!: Inventory[];
+  @OneToMany(() => Inventories, (inv) => inv.warehouse)
+  inventories!: Inventories[];
 
   @OneToMany(() => StockMovement, (sm) => sm.warehouse)
   stockMovements!: StockMovement[];

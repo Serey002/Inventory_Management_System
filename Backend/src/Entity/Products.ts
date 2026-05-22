@@ -1,12 +1,12 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
-import { Category } from "./Category";
+import { Categories } from "./Categories";
 import { Supplier } from "./Supplier";
-import { Inventory } from "./Inventory";
+import { Inventories } from "./Inventories";
 import { StockMovement } from "./StockMovement";
 import { SaleItem } from "./SaleItem";
 
 @Entity()
-export class Product {
+export class Products {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -31,14 +31,14 @@ export class Product {
   @Column({ default: "ACTIVE" })
   status!: string;
 
-  @ManyToOne(() => Category, (cat) => cat.products)
-  category!: Category;
+  @ManyToOne(() => Categories, (cat) => cat.products)
+  category!: Categories;
 
   @ManyToOne(() => Supplier, (sup) => sup.products)
   supplier!: Supplier;
 
-  @OneToMany(() => Inventory, (inv) => inv.product)
-  inventories!: Inventory[];
+  @OneToMany(() => Inventories, (inv) => inv.product)
+  inventories!: Inventories[];
 
   @OneToMany(() => StockMovement, (sm) => sm.product)
   stockMovements!: StockMovement[];
@@ -47,4 +47,4 @@ export class Product {
   saleItems!: SaleItem[];
 }
 
-export default Product;
+export default Products;

@@ -1,10 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
-import { Role } from "./Role";
+import { Roles } from "./Roles";
 import { Sale } from "./Sale";
 import { StockMovement } from "./StockMovement";
 
 @Entity()
-export class User {
+export class Users {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -17,8 +17,8 @@ export class User {
   @Column()
   password!: string;
 
-  @ManyToOne(() => Role, (role) => role.users)
-  role!: Role;
+  @ManyToOne(() => Roles, (roles) => roles.users)
+  role!: Roles;
 
   @OneToMany(() => Sale, (sale) => sale.user)
   sales!: Sale[];
@@ -27,4 +27,4 @@ export class User {
   stockMovements!: StockMovement[];
 }
 
-export default User;
+export default Users;

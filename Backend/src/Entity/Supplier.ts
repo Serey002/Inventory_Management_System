@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { Product } from "./Product";
+import { Products } from "./Products";
 
 @Entity()
 export class Supplier {
@@ -15,8 +15,8 @@ export class Supplier {
   @Column({ unique: true, nullable: true })
   email!: string;
 
-  @OneToMany(() => Product, (product) => product.supplier)
-  products!: Product[];
+  @OneToMany(() => Products, (product) => product.supplier)
+  products!: Products[];
 }
 
 export default Supplier;

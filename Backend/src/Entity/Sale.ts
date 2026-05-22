@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn } from "typeorm";
-import { User } from "./User";
+import { Users } from "./Users";
 import { SaleItem } from "./SaleItem";
 
 @Entity()
@@ -10,8 +10,8 @@ export class Sale {
   @Column("decimal")
   total_amount!: number;
 
-  @ManyToOne(() => User)
-  user!: User;
+  @ManyToOne(() => Users)
+  user!: Users;
 
   @CreateDateColumn()
   created_at!: Date;

@@ -1,26 +1,26 @@
-import { Users } from "../Entities/Users";
+import { User } from "../Entities/Users";
 import { UserRepository } from "../repositories/UserRepository";
 
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async getAll(): Promise<Users[]> {
+  async getAll(): Promise<User[]> {
     return this.userRepository.findAll();
   }
 
-  async getUserById(id: number): Promise<Users | null> {
+  async getUserById(id: number): Promise<User | null> {
     return this.userRepository.findById(id);
   }
 
-  async getUserByEmail(email: string): Promise<Users | null> {
+  async getUserByEmail(email: string): Promise<User | null> {
     return this.userRepository.findByEmail(email);
   }
 
-  async createUser(user: Users): Promise<Users> {
+  async createUser(user: User): Promise<User> {
     return this.userRepository.save(user);
   }
 
-  async updateUser(id: number, data: Partial<Users>): Promise<Users | null> {
+  async updateUser(id: number, data: Partial<User>): Promise<User | null> {
     const existing = await this.userRepository.findById(id);
     if (!existing) return null;
     Object.assign(existing, data);
@@ -28,8 +28,8 @@ export class UserService {
   }
 
   async deleteUser(id: number): Promise<boolean> {
-    const existing = await this.userRepository.findById(id);
-    if (!existing) return false;
+    const exists = await this.userRepository.existsById(id);
+    if (!exists) return false;
     await this.userRepository.delete(id);
     return true;
   }

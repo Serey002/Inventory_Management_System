@@ -1,15 +1,10 @@
-import {
-  Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, UpdateDateColumn, OneToMany
-} from "typeorm";
-import { Products } from "./Products";
+import { Entity, Column, OneToMany } from "typeorm";
+import { BaseEntity } from "./BaseEntity";
+import { Product } from "./Products";
 import { StockMovement } from "./StockMovement";
 
 @Entity("suppliers")
-export class Supplier {
-  @PrimaryGeneratedColumn()
-  id!: number;
-
+export class Supplier extends BaseEntity {
   @Column({ type: "varchar", length: 150 })
   name!: string;
 
@@ -28,14 +23,8 @@ export class Supplier {
   @Column({ type: "boolean", default: true })
   isActive!: boolean;
 
-  @CreateDateColumn()
-  createdAt!: Date;
-
-  @UpdateDateColumn()
-  updatedAt!: Date;
-
-  @OneToMany(() => Products, (product) => product.supplier)
-  products!: Products[];
+  @OneToMany(() => Product, (product) => product.supplier)
+  products!: Product[];
 
   @OneToMany(() => StockMovement, (sm) => sm.supplier)
   stockMovements!: StockMovement[];

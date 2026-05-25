@@ -11,6 +11,8 @@ import { AuthService } from "./services/AuthService";
 import { UserService } from "./services/UserService";
 import { AuthController } from "./controllers/AuthController";
 import { createAuthRouter } from "./routes/authRoutes";
+import { UserController } from "./controllers/UserController";
+import { createUserRouter } from "./routes/UserRoutes";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -26,9 +28,11 @@ AppDataSource.initialize()
     const roleRepository = new RoleRepository(AppDataSource);
     const authService = new AuthService(userRepository, roleRepository);
     const userService = new UserService(userRepository);
+    const userController = new UserController(userService);
     const authController = new AuthController(authService);
 
     app.use("/api/auth", createAuthRouter(authController, authService));
+    app.use("/api/users", createUserRouter(userController));
     app.get("/api/health", (_req, res) => {
       res.json({ status: "ok", timestamp: new Date().toISOString() });
     });
@@ -36,8 +40,6 @@ AppDataSource.initialize()
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
-
-    void userService;
   })
   .catch((err) => {
     console.error("❌ Database connection failed:", err);

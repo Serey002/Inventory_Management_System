@@ -42,19 +42,4 @@ export class AuthController extends BaseController {
       this.sendError(res, this.resolveError(error, "Registration failed"), 400);
     }
   };
-
-  getProfile = async (req: Request, res: Response): Promise<void> => {
-    const userId = req.user?.userId;
-
-    if (!userId) {
-      this.sendError(res, "Unauthorized", 401);
-      return;
-    }
-
-    try {
-      this.sendSuccess(res, await this.authService.getProfile(userId));
-    } catch (error) {
-      this.sendError(res, this.resolveError(error, "Failed to get profile"), 404);
-    }
-  };
 }

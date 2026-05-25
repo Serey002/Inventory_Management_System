@@ -26,9 +26,6 @@ export class Users {
   @Column({ type: "varchar", length: 255 })
   password!: string;
 
-  @Column({ type: "varchar", length: 255, nullable: true })
-  avatar!: string;
-
   @Column({ type: "boolean", default: true })
   isActive!: boolean;
 

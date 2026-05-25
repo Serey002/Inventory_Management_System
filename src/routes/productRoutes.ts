@@ -1,8 +1,13 @@
-import { Router } from "express";
+import { Router, RequestHandler } from "express";
 import { ProductController } from "../controllers/ProductController";
 
-export function createProductRouter(productController: ProductController): Router {
+export function createProductRouter(
+  productController: ProductController,
+  authMiddleware: RequestHandler,
+): Router {
   const router = Router();
+
+  router.use(authMiddleware);
 
   router.get("/", productController.getAll);
   router.get("/:id", productController.getById);

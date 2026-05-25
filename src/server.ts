@@ -10,6 +10,7 @@ import { RoleRepository } from "./repositories/RoleRepository";
 import { AuthService } from "./services/AuthService";
 import { UserService } from "./services/UserService";
 import { AuthController } from "./controllers/AuthController";
+import { createAuthMiddleware } from "./middlewares/authMiddleware";
 import { createAuthRouter } from "./routes/authRoutes";
 import { ProductController } from "./controllers/ProductController";
 import { createProductRouter } from "./routes/productRoutes";
@@ -34,9 +35,10 @@ AppDataSource.initialize()
     const productService = new ProductService(productRepository);
     const productController = new ProductController(productService);
     const authController = new AuthController(authService);
+    const authMiddleware = createAuthMiddleware(authService);
 
     app.use("/api/auth", createAuthRouter(authController, authService));
-    app.use("/api/products", createProductRouter(productController));
+    app.use("/api/products", createProductRouter(productController, authMiddleware));
     app.get("/api/health", (_req, res) => {
       res.json({ status: "ok", timestamp: new Date().toISOString() });
     });

@@ -1,23 +1,23 @@
 import {
   Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, ManyToOne, JoinColumn
+  CreateDateColumn, ManyToOne, JoinColumn,
 } from "typeorm";
-import { Products } from "./Products";
+import { Product } from "./Products";
 import { Warehouse } from "./Warehouse";
 import { Supplier } from "./Supplier";
-import { Users } from "./Users";
+import { User } from "./Users";
 
 export enum MovementType {
-  IN = "IN",
-  OUT = "OUT",
-  TRANSFER = "TRANSFER",
+  IN         = "IN",
+  OUT        = "OUT",
+  TRANSFER   = "TRANSFER",
   ADJUSTMENT = "ADJUSTMENT",
 }
 
 @Entity("stock_movements")
 export class StockMovement {
   @PrimaryGeneratedColumn()
-  id!: number;
+  readonly id!: number;
 
   @Column({ type: "enum", enum: MovementType })
   type!: MovementType;
@@ -26,44 +26,51 @@ export class StockMovement {
   quantity!: number;
 
   @Column({ type: "text", nullable: true })
-  note!: string;
+  note!: string | null;
 
-  @ManyToOne(() => Products, (product) => product.stockMovements, { onDelete: "CASCADE" })
+  // ── Source ────────────────────────────────────────────────────────────────
+
+  @ManyToOne(() => Product, (p) => p.stockMovements, { onDelete: "CASCADE" })
   @JoinColumn({ name: "productId" })
-  product!: Products;
+  product!: Product;
 
   @Column()
   productId!: number;
 
-  @ManyToOne(() => Warehouse, (warehouse) => warehouse.stockMovements, { nullable: true, onDelete: "SET NULL" })
+  @ManyToOne(() => Warehouse, (w) => w.stockMovements, { nullable: true, onDelete: "SET NULL" })
   @JoinColumn({ name: "warehouseId" })
-  warehouse!: Warehouse;
+  warehouse!: Warehouse | null;
 
   @Column({ nullable: true })
-  warehouseId!: number;
+  warehouseId!: number | null;
 
-  // For TRANSFER: destination warehouse
+  // ── Transfer destination ──────────────────────────────────────────────────
+
   @ManyToOne(() => Warehouse, { nullable: true, onDelete: "SET NULL" })
   @JoinColumn({ name: "destinationWarehouseId" })
-  destinationWarehouse!: Warehouse;
+  destinationWarehouse!: Warehouse | null;
 
   @Column({ nullable: true })
-  destinationWarehouseId!: number;
+  destinationWarehouseId!: number | null;
 
-  @ManyToOne(() => Supplier, (supplier) => supplier.stockMovements, { nullable: true, onDelete: "SET NULL" })
+  // ── Relations ─────────────────────────────────────────────────────────────
+
+  @ManyToOne(() => Supplier, (s) => s.stockMovements, { nullable: true, onDelete: "SET NULL" })
   @JoinColumn({ name: "supplierId" })
-  supplier!: Supplier;
+  supplier!: Supplier | null;
 
   @Column({ nullable: true })
-  supplierId!: number;
+  supplierId!: number | null;
 
-  @ManyToOne(() => Users, (user) => user.stockMovements, { nullable: true, onDelete: "SET NULL" })
+  @ManyToOne(() => User, (u) => u.stockMovements, { nullable: true, onDelete: "SET NULL" })
   @JoinColumn({ name: "userId" })
-  user!: Users;
+  user!: User | null;
 
   @Column({ nullable: true })
-  userId!: number;
+  userId!: number | null;
 
   @CreateDateColumn()
-  createdAt!: Date;
+  readonly createdAt!: Date;
 }
+
+export default StockMovement;

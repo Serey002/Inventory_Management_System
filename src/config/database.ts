@@ -3,18 +3,19 @@ import dotenv from "dotenv";
 import { DataSource } from "typeorm";
 
 import { Role } from "../Entities/Roles";
-import { Users } from "../Entities/Users";
-import { Categories } from "../Entities/Categories";
+import { User } from "../Entities/Users";
+import { Category } from "../Entities/Categories";
 import { Supplier } from "../Entities/Supplier";
 import { Warehouse } from "../Entities/Warehouse";
-import { Products } from "../Entities/Products";
-import { Inventories } from "../Entities/Inventories";
+import { Product } from "../Entities/Products";
+import { Inventory } from "../Entities/Inventories";
 import { StockMovement } from "../Entities/StockMovement";
 import { Sale } from "../Entities/Sale";
 import { SaleItem } from "../Entities/SaleItem";
 
-// Load environment variables
 dotenv.config();
+
+const isDev = process.env.NODE_ENV === "development";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -23,23 +24,21 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USERNAME || "root",
   password: process.env.DB_PASSWORD || "",
   database: process.env.DB_NAME || "ims_db",
-  synchronize: process.env.NODE_ENV === "development",
-  logging: process.env.NODE_ENV === "development",
-  dropSchema: false,
-
+  synchronize: isDev,
+  logging: isDev,
+  dropSchema: isDev,
   entities: [
     Role,
-    Users,
-    Categories,
+    User,
+    Category,
     Supplier,
     Warehouse,
-    Products,
-    Inventories,
+    Product,
+    Inventory,
     StockMovement,
     Sale,
     SaleItem,
   ],
-
   migrations: [],
   subscribers: [],
 });

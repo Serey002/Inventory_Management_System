@@ -1,16 +1,26 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
-import { Categories } from "./Categories";
+import {
+  Entity, Column,
+  ManyToOne, OneToMany, JoinColumn,
+  CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn,
+} from "typeorm";
+import { Category } from "./Categories";
 import { Supplier } from "./Supplier";
-import { Inventories } from "./Inventories";
+import { Inventory } from "./Inventories";
 import { StockMovement } from "./StockMovement";
 import { SaleItem } from "./SaleItem";
 
-@Entity()
-export class Products {
-  @PrimaryGeneratedColumn()
-  id!: number;
+export enum ProductStatus {
+  ACTIVE   = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  ARCHIVED = "ARCHIVED",
+}
 
-  @Column()
+@Entity("products")
+export class Product {
+  @PrimaryGeneratedColumn()
+  readonly id!: number;
+
+  @Column({ type: "varchar", length: 150 })
   name!: string;
 
   @Column({ unique: true })
@@ -19,32 +29,46 @@ export class Products {
   @Column({ unique: true })
   barcode!: string;
 
-  @Column("decimal")
+  @Column({ type: "decimal", precision: 10, scale: 2 })
   price!: number;
 
-  @Column("decimal")
+  @Column({ type: "decimal", precision: 10, scale: 2 })
   cost!: number;
 
-  @Column({ default: 0 })
+  @Column({ type: "int", default: 0 })
   quantity!: number;
 
-  @Column({ default: "ACTIVE" })
-  status!: string;
+  @Column({ type: "enum", enum: ProductStatus, default: ProductStatus.ACTIVE })
+  status!: ProductStatus;
 
-  @ManyToOne(() => Categories, (cat) => cat.products)
-  category!: Categories;
+  @ManyToOne(() => Category, (cat) => cat.products, { nullable: true, onDelete: "SET NULL" })
+  @JoinColumn({ name: "categoryId" })
+  category!: Category | null;
 
-  @ManyToOne(() => Supplier, (sup) => sup.products)
-  supplier!: Supplier;
+  @Column({ nullable: true })
+  categoryId!: number | null;
 
-  @OneToMany(() => Inventories, (inv) => inv.product)
-  inventories!: Inventories[];
+  @ManyToOne(() => Supplier, (sup) => sup.products, { nullable: true, onDelete: "SET NULL" })
+  @JoinColumn({ name: "supplierId" })
+  supplier!: Supplier | null;
+
+  @Column({ nullable: true })
+  supplierId!: number | null;
+
+  @OneToMany(() => Inventory, (inv) => inv.product)
+  inventories!: Inventory[];
 
   @OneToMany(() => StockMovement, (sm) => sm.product)
   stockMovements!: StockMovement[];
 
   @OneToMany(() => SaleItem, (si) => si.product)
   saleItems!: SaleItem[];
+
+  @CreateDateColumn()
+  readonly createdAt!: Date;
+
+  @UpdateDateColumn()
+  readonly updatedAt!: Date;
 }
 
-export default Products;
+export default Product;

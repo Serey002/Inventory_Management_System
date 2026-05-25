@@ -1,25 +1,25 @@
 import {
   Entity, PrimaryGeneratedColumn, Column,
   CreateDateColumn, UpdateDateColumn,
-  ManyToOne, JoinColumn, Unique
+  ManyToOne, JoinColumn, Unique,
 } from "typeorm";
-import { Products } from "./Products";
+import { Product } from "./Products";
 import { Warehouse } from "./Warehouse";
 
 @Entity("inventories")
 @Unique(["productId", "warehouseId"])
-export class Inventories {
+export class Inventory {
   @PrimaryGeneratedColumn()
-  id!: number;
+  readonly id!: number;
 
-  @ManyToOne(() => Products, (product) => product.inventories, { onDelete: "CASCADE" })
+  @ManyToOne(() => Product, (p) => p.inventories, { onDelete: "CASCADE" })
   @JoinColumn({ name: "productId" })
-  product!: Products;
+  product!: Product;
 
   @Column()
   productId!: number;
 
-  @ManyToOne(() => Warehouse, (warehouse) => warehouse.inventories, { onDelete: "CASCADE" })
+  @ManyToOne(() => Warehouse, (w) => w.inventories, { onDelete: "CASCADE" })
   @JoinColumn({ name: "warehouseId" })
   warehouse!: Warehouse;
 
@@ -33,10 +33,8 @@ export class Inventories {
   reservedQuantity!: number;
 
   @CreateDateColumn()
-  createdAt!: Date;
+  readonly createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt!: Date;
+  readonly updatedAt!: Date;
 }
-
-export default Inventories;

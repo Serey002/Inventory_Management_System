@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { DataSource } from "typeorm";
 
 import { Role } from "../Entities/Roles";
-import { User } from "../Entities/Users";
+import { Users } from "../Entities/Users";
 import { Category } from "../Entities/Categories";
 import { Supplier } from "../Entities/Supplier";
 import { Warehouse } from "../Entities/Warehouse";
@@ -29,7 +29,7 @@ export const AppDataSource = new DataSource({
   dropSchema: isDev,
   entities: [
     Role,
-    User,
+    Users,
     Category,
     Supplier,
     Warehouse,

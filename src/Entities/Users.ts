@@ -8,7 +8,7 @@ import { Sale } from "./Sale";
 import { StockMovement } from "./StockMovement";
 
 @Entity("users")
-export class User extends BaseEntity {
+export class Users extends BaseEntity {
   @Column({ type: "varchar", length: 100 })
   name!: string;
 
@@ -42,4 +42,4 @@ export class User extends BaseEntity {
   stockMovements!: StockMovement[];
 }
 
-export default User;
+export default Users;

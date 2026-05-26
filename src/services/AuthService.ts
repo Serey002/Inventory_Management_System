@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { BaseAuthService } from "./BaseAuthService";
 import { UserRepository } from "../repositories/UserRepository";
 import { RoleRepository } from "../repositories/RoleRepository";
-import { User } from "../Entities/Users";
+import { Users } from "../Entities/Users";
 import { RegisterDTO, AuthResult, JwtPayload, SafeUser } from "../types/authType";
 export class AuthService extends BaseAuthService {
   private static readonly SALT_ROUNDS = 12;
@@ -38,7 +38,7 @@ export class AuthService extends BaseAuthService {
       throw new Error("Email already in use");
     }
 
-    const user        = new User();
+    const user        = new Users();
     user.name         = data.name;
     user.email        = data.email;
     user.password     = await bcrypt.hash(data.password, AuthService.SALT_ROUNDS);
@@ -71,7 +71,7 @@ export class AuthService extends BaseAuthService {
 
   // ── Private helpers ───────────────────────────────────────────────────────
 
-  private generateToken(user: User): string {
+  private generateToken(user: Users): string {
     const payload: JwtPayload = {
       userId: user.id,
       email:  user.email,
@@ -82,7 +82,7 @@ export class AuthService extends BaseAuthService {
     } as jwt.SignOptions);
   }
 
-  private sanitizeUser(user: User): SafeUser {
+  private sanitizeUser(user: Users): SafeUser {
     return {
       id:       user.id,
       name:     user.name,

@@ -5,7 +5,7 @@ import {
 import { Product } from "./Products";
 import { Warehouse } from "./Warehouse";
 import { Supplier } from "./Supplier";
-import { User } from "./Users";
+import { Users } from "./Users";
 
 export enum MovementType {
   IN         = "IN",
@@ -62,9 +62,9 @@ export class StockMovement {
   @Column({ nullable: true })
   supplierId!: number | null;
 
-  @ManyToOne(() => User, (u) => u.stockMovements, { nullable: true, onDelete: "SET NULL" })
+  @ManyToOne(() => Users, (u) => u.stockMovements, { nullable: true, onDelete: "SET NULL" })
   @JoinColumn({ name: "userId" })
-  user!: User | null;
+  user!: Users | null;
 
   @Column({ nullable: true })
   userId!: number | null;

@@ -3,7 +3,7 @@ import {
   CreateDateColumn, UpdateDateColumn,
   ManyToOne, JoinColumn, OneToMany,
 } from "typeorm";
-import { User } from "./Users";
+import { Users } from "./Users";
 import { SaleItem } from "./SaleItem";
 
 export enum SaleStatus {
@@ -39,9 +39,9 @@ export class Sale {
   @Column({ type: "text", nullable: true })
   note!: string | null;
 
-  @ManyToOne(() => User, (u) => u.sales, { nullable: true, onDelete: "SET NULL" })
+  @ManyToOne(() => Users, (u) => u.sales, { nullable: true, onDelete: "SET NULL" })
   @JoinColumn({ name: "userId" })
-  user!: User | null;
+  user!: Users | null;
 
   @Column({ nullable: true })
   userId!: number | null;

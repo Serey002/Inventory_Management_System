@@ -1,6 +1,6 @@
 import { Entity, Column, OneToMany } from "typeorm";
 import { BaseEntity } from "./BaseEntity";
-import { User } from "./Users";
+import { Users } from "./Users";
 
 /**
  * Represents a permission role (e.g. ADMIN, STAFF).
@@ -14,8 +14,8 @@ export class Role extends BaseEntity {
   @Column({ type: "text", nullable: true })
   description!: string;
 
-  @OneToMany(() => User, (user) => user.role)
-  users!: User[];
+  @OneToMany(() => Users, (user) => user.role)
+  users!: Users[];
 }
 
 export default Role;

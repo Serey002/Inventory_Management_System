@@ -1,13 +1,13 @@
 import { DataSource } from "typeorm";
 import { BaseRepository } from "./BaseRepository";
-import { User } from "../Entities/Users";
+import { Users } from "../Entities/Users";
 
-export class UserRepository extends BaseRepository<User> {
+export class UserRepository extends BaseRepository<Users> {
   constructor(dataSource: DataSource) {
-    super(User, dataSource);
+    super(Users, dataSource);
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string): Promise<Users | null> {
     return this.repository
       .createQueryBuilder("user")
       .addSelect("user.password")
@@ -15,7 +15,7 @@ export class UserRepository extends BaseRepository<User> {
       .getOne();
   }
 
-  async findActiveUsers(): Promise<User[]> {
+  async findActiveUsers(): Promise<Users[]> {
     return this.repository.find({
       where: { isActive: true },
       relations: { role: true },

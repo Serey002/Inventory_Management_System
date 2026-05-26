@@ -1,3 +1,5 @@
+// ── Request DTOs ──────────────────────────────────────────────────────────────
+
 export interface LoginDTO {
   email: string;
   password: string;
@@ -10,22 +12,30 @@ export interface RegisterDTO {
   roleId?: number;
 }
 
+// ── Response shapes ────────────────────────────────────────────────────────────
+
+export interface SafeUser {
+  id: number;
+  name: string;
+  email: string;
+  role: string | null;
+  isActive: boolean;
+}
+
+export interface AuthResult {
+  token: string;
+  user: SafeUser;
+}
+
+// ── JWT ───────────────────────────────────────────────────────────────────────
+
 export interface JwtPayload {
   userId: number;
   email: string;
   role: string | null;
 }
 
-export interface AuthResult {
-  token: string;
-  user: {
-    id: number;
-    name: string;
-    email: string;
-    role: string | null;
-    isActive: boolean;
-  };
-}
+// ── Express augmentation ──────────────────────────────────────────────────────
 
 declare global {
   namespace Express {

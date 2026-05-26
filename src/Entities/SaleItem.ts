@@ -1,14 +1,14 @@
 import {
   Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, ManyToOne, JoinColumn
+  CreateDateColumn, ManyToOne, JoinColumn,
 } from "typeorm";
 import { Sale } from "./Sale";
-import { Products } from "./Products";
+import { Product } from "./Products";
 
 @Entity("sale_items")
 export class SaleItem {
   @PrimaryGeneratedColumn()
-  id!: number;
+  readonly id!: number;
 
   @ManyToOne(() => Sale, (sale) => sale.items, { onDelete: "CASCADE" })
   @JoinColumn({ name: "saleId" })
@@ -17,9 +17,9 @@ export class SaleItem {
   @Column()
   saleId!: number;
 
-  @ManyToOne(() => Products, (product) => product.saleItems, { onDelete: "RESTRICT" })
+  @ManyToOne(() => Product, (p) => p.saleItems, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "productId" })
-  product!: Products;
+  product!: Product;
 
   @Column()
   productId!: number;
@@ -37,5 +37,7 @@ export class SaleItem {
   subtotal!: number;
 
   @CreateDateColumn()
-  createdAt!: Date;
+  readonly createdAt!: Date;
 }
+
+export default SaleItem;

@@ -1,15 +1,16 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { JwtPayload } from "../types/authType";
-import { AuthService } from "../services/AuthService";
-
+import { BaseAuthService } from "../services/BaseAuthService";
 abstract class BaseAuthMiddleware {
   public handle = (req: Request, res: Response, next: NextFunction): void => {
     const token = this.extractToken(req);
+
     if (!token) {
       res.status(401).json({ success: false, message: "No token provided" });
       return;
     }
+
     try {
       req.user = this.authenticate(token);
       next();
@@ -27,19 +28,20 @@ abstract class BaseAuthMiddleware {
 
   protected resolveError(error: unknown): string {
     if (error instanceof jwt.TokenExpiredError) return "Token has expired";
-    if (error instanceof jwt.JsonWebTokenError) return "Invalid token";
+    if (error instanceof jwt.JsonWebTokenError)  return "Invalid token";
     return "Authentication failed";
   }
 }
 
 class JwtAuthMiddleware extends BaseAuthMiddleware {
-  constructor(private readonly authService: AuthService) { super(); }
+  constructor(private readonly authService: BaseAuthService) {
+    super();
+  }
 
   protected authenticate(token: string): JwtPayload {
-    return this.authService.validateToken(token) as JwtPayload;
+    return this.authService.validateToken(token);
   }
 }
 
-// Resolved from server.ts via createAuthMiddleware()
-export const createAuthMiddleware = (authService: AuthService) =>
+export const createAuthMiddleware = (authService: BaseAuthService) =>
   new JwtAuthMiddleware(authService).handle;

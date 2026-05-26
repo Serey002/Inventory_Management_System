@@ -1,15 +1,10 @@
-import {
-  Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, UpdateDateColumn, OneToMany
-} from "typeorm";
-import { Inventories } from "./Inventories";
+import { Entity, Column, OneToMany } from "typeorm";
+import { BaseEntity } from "./BaseEntity";
+import { Inventory } from "./Inventories";
 import { StockMovement } from "./StockMovement";
 
 @Entity("warehouses")
-export class Warehouse {
-  @PrimaryGeneratedColumn()
-  id!: number;
-
+export class Warehouse extends BaseEntity {
   @Column({ type: "varchar", length: 150 })
   name!: string;
 
@@ -22,16 +17,11 @@ export class Warehouse {
   @Column({ type: "boolean", default: true })
   isActive!: boolean;
 
-  @CreateDateColumn()
-  createdAt!: Date;
-
-  @UpdateDateColumn()
-  updatedAt!: Date;
-
-  @OneToMany(() => Inventories, (inventory) => inventory.warehouse)
-  inventories!: Inventories[];
+  @OneToMany(() => Inventory, (inv) => inv.warehouse)
+  inventories!: Inventory[];
 
   @OneToMany(() => StockMovement, (sm) => sm.warehouse)
   stockMovements!: StockMovement[];
 }
+
 export default Warehouse;

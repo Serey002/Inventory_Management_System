@@ -10,7 +10,6 @@ export class CategoryController extends BaseController {
   }
     //   GET ALL
 
-
   getAll = async (_req: Request, res: Response): Promise<void> => {
     try {
       this.sendSuccess(res, await this.categoryRepository.findAll());

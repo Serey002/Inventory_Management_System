@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
 import { BaseController } from "./BaseController";
-import { AuthService } from "../services/AuthService";
+import { BaseAuthService } from "../services/BaseAuthService";
 import { LoginDTO, RegisterDTO } from "../types/authType";
-
 export class AuthController extends BaseController {
-  constructor(private readonly authService: AuthService) {
+  constructor(private readonly authService: BaseAuthService) {
     super();
   }
 
@@ -27,7 +26,7 @@ export class AuthController extends BaseController {
     const data: RegisterDTO = req.body;
 
     if (!data.name || !data.email || !data.password) {
-      this.sendError(res, "Name, email and password are required");
+      this.sendError(res, "Name, email, and password are required");
       return;
     }
 
@@ -40,21 +39,6 @@ export class AuthController extends BaseController {
       this.sendCreated(res, await this.authService.register(data));
     } catch (error) {
       this.sendError(res, this.resolveError(error, "Registration failed"), 400);
-    }
-  };
-
-  getProfile = async (req: Request, res: Response): Promise<void> => {
-    const userId = req.user?.userId;
-
-    if (!userId) {
-      this.sendError(res, "Unauthorized", 401);
-      return;
-    }
-
-    try {
-      this.sendSuccess(res, await this.authService.getProfile(userId));
-    } catch (error) {
-      this.sendError(res, this.resolveError(error, "Failed to get profile"), 404);
     }
   };
 }

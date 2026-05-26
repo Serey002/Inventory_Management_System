@@ -28,8 +28,8 @@ export class UserService {
   }
 
   async deleteUser(id: number): Promise<boolean> {
-    const existing = await this.userRepository.findById(id);
-    if (!existing) return false;
+    const exists = await this.userRepository.existsById(id);
+    if (!exists) return false;
     await this.userRepository.delete(id);
     return true;
   }

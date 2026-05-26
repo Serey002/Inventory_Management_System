@@ -1,22 +1,22 @@
 import {
   Entity, PrimaryGeneratedColumn, Column,
   CreateDateColumn, UpdateDateColumn,
-  ManyToOne, JoinColumn, OneToMany
+  ManyToOne, JoinColumn, OneToMany,
 } from "typeorm";
 import { Users } from "./Users";
 import { SaleItem } from "./SaleItem";
 
 export enum SaleStatus {
-  PENDING = "PENDING",
+  PENDING   = "PENDING",
   COMPLETED = "COMPLETED",
   CANCELLED = "CANCELLED",
-  REFUNDED = "REFUNDED",
+  REFUNDED  = "REFUNDED",
 }
 
 @Entity("sales")
 export class Sale {
   @PrimaryGeneratedColumn()
-  id!: number;
+  readonly id!: number;
 
   @Column({ type: "varchar", length: 100, unique: true })
   invoiceNumber!: string;
@@ -37,21 +37,23 @@ export class Sale {
   grandTotal!: number;
 
   @Column({ type: "text", nullable: true })
-  note!: string;
+  note!: string | null;
 
-  @ManyToOne(() => Users, (user) => user.sales, { nullable: true, onDelete: "SET NULL" })
+  @ManyToOne(() => Users, (u) => u.sales, { nullable: true, onDelete: "SET NULL" })
   @JoinColumn({ name: "userId" })
-  user!: Users;
+  user!: Users | null;
 
   @Column({ nullable: true })
-  userId!: number;
-
-  @CreateDateColumn()
-  createdAt!: Date;
-
-  @UpdateDateColumn()
-  updatedAt!: Date;
+  userId!: number | null;
 
   @OneToMany(() => SaleItem, (item) => item.sale, { cascade: true })
   items!: SaleItem[];
+
+  @CreateDateColumn()
+  readonly createdAt!: Date;
+
+  @UpdateDateColumn()
+  readonly updatedAt!: Date;
 }
+
+export default Sale;

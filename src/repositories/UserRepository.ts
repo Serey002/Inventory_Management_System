@@ -8,10 +8,11 @@ export class UserRepository extends BaseRepository<Users> {
   }
 
   async findByEmail(email: string): Promise<Users | null> {
-    return this.repository.findOne({
-      where: { email },
-      relations: { role: true },
-    });
+    return this.repository
+      .createQueryBuilder("user")
+      .addSelect("user.password")
+      .where("user.email = :email", { email })
+      .getOne();
   }
 
   async findActiveUsers(): Promise<Users[]> {
@@ -25,5 +26,3 @@ export class UserRepository extends BaseRepository<Users> {
     return this.repository.existsBy({ email });
   }
 }
-
-export default UserRepository;

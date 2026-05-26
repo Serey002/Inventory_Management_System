@@ -1,20 +1,17 @@
-import { AppDataSource } from "../config/database";
-import { CategoryRepository } from "../repositories/CategoryRepository";
-import { CategoryService } from "../services/CategoryService";  
+import { DataSource } from "typeorm";
+import { BaseRepository } from "./BaseRepository";
+import { Categories } from "../Entities/Categories";
 
-export class CategoryController {
-    private repository=AppDataSource.getRepository(CategoryRepository);
-    //CREATE
-    async CreateCategory(name:string){
-        const CategoryRepository =this.repository.create({name});
-        await this.repository.save(CategoryRepository);
-        return CategoryRepository;
-    }
-    //Get All
-    async getAllCategory(){
-        return this.repository.find();
-    }   
+export class CategoryRepository extends BaseRepository<Categories> {
+  constructor(dataSource: DataSource) {
+    super(Categories, dataSource);
+  }
 
-  
-  
+  async findByName(name: string): Promise<Categories | null> {
+    return this.repository.findOne({
+      where: { name },
+    });
+  }
 }
+
+export default CategoryRepository;

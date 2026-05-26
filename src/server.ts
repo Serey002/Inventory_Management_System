@@ -15,6 +15,9 @@ import { ProductController } from "./controllers/ProductController";
 import { createProductRouter } from "./routes/productRoutes";
 import { ProductRepository } from "./repositories/ProductRepository";
 import { ProductService } from "./services/ProductService";
+import { CategoryController } from "./controllers/CategoryController";
+import { createCategoryRouter } from "./routes/categoryRoutes";
+import { CategoryRepository } from "./repositories/CategoryRepository";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -31,12 +34,15 @@ AppDataSource.initialize()
     const authService = new AuthService(userRepository, roleRepository);
     const userService = new UserService(userRepository);
     const productRepository = new ProductRepository(AppDataSource);
+    const categoryRepository = new CategoryRepository(AppDataSource);
     const productService = new ProductService(productRepository);
     const productController = new ProductController(productService);
+    const categoryController = new CategoryController(categoryRepository);
     const authController = new AuthController(authService);
 
     app.use("/api/auth", createAuthRouter(authController, authService));
     app.use("/api/products", createProductRouter(productController));
+    app.use("/api/categories", createCategoryRouter(categoryController));
     app.get("/api/health", (_req, res) => {
       res.json({ status: "ok", timestamp: new Date().toISOString() });
     });

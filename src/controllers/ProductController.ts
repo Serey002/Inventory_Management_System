@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { BaseController } from "./BaseController";
-import { ProductService, ProductDTO } from "../services/ProductService";
+import { ProductService } from "../services/ProductService";
+import { ProductDTO, UpdateProductInput } from "../types/productType";
 
 export class ProductController extends BaseController {
   constructor(private readonly productService: ProductService) {
@@ -48,7 +49,10 @@ export class ProductController extends BaseController {
       return;
     }
     try {
-      this.sendSuccess(res, await this.productService.update(id, req.body as Partial<ProductDTO>));
+      this.sendSuccess(
+        res,
+        await this.productService.update(id, req.body as UpdateProductInput),
+      );
     } catch (error) {
       this.sendError(res, this.resolveError(error, "Failed to update product"), 404);
     }

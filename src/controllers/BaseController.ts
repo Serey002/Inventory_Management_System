@@ -1,5 +1,20 @@
 import { Response } from "express";
+import { AppError } from "../errors/AppError";
+
 export abstract class BaseController {
+  protected async handleRequest(
+    res: Response,
+    action: () => Promise<void>,
+    fallbackMessage: string,
+    fallbackStatusCode: number,
+  ): Promise<void> {
+    try {
+      await action();
+    } catch (error) {
+      this.sendResolvedError(res, error, fallbackMessage, fallbackStatusCode);
+    }
+  }
+
   protected sendSuccess<T>(res: Response, data: T, statusCode = 200): void {
     res.status(statusCode).json({ success: true, data });
   }
@@ -18,5 +33,25 @@ export abstract class BaseController {
 
   protected resolveError(error: unknown, fallback: string): string {
     return error instanceof Error ? error.message : fallback;
+  }
+
+  protected resolveStatusCode(
+    error: unknown,
+    fallbackStatusCode: number,
+  ): number {
+    return error instanceof AppError ? error.statusCode : fallbackStatusCode;
+  }
+
+  protected sendResolvedError(
+    res: Response,
+    error: unknown,
+    fallbackMessage: string,
+    fallbackStatusCode: number,
+  ): void {
+    this.sendError(
+      res,
+      this.resolveError(error, fallbackMessage),
+      this.resolveStatusCode(error, fallbackStatusCode),
+    );
   }
 }

@@ -1,8 +1,8 @@
 import {
   Entity, Column,
   ManyToOne, OneToMany, JoinColumn,
-  CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn,
 } from "typeorm";
+import { BaseEntity } from "./BaseEntity";
 import { Category } from "./Categories";
 import { Supplier } from "./Supplier";
 import { Inventory } from "./Inventories";
@@ -16,10 +16,7 @@ export enum ProductStatus {
 }
 
 @Entity("products")
-export class Product {
-  @PrimaryGeneratedColumn()
-  readonly id!: number;
-
+export class Product extends BaseEntity {
   @Column({ type: "varchar", length: 150 })
   name!: string;
 
@@ -63,12 +60,6 @@ export class Product {
 
   @OneToMany(() => SaleItem, (si) => si.product)
   saleItems!: SaleItem[];
-
-  @CreateDateColumn()
-  readonly createdAt!: Date;
-
-  @UpdateDateColumn()
-  readonly updatedAt!: Date;
 }
 
 export default Product;

@@ -45,7 +45,7 @@ AppDataSource.initialize()
     const supplierController = new SupplierController(supplierService);
 
     // ── Routes ───────────────────────────────────────────────────────────────
-    app.use("/api/auth",  createAuthRouter(authController, authService));
+    app.use("/api/auth",  createAuthRouter(authController));
     app.use("/api/products", createProductRouter(productController));
     app.use("/api/suppliers", createSupplierRouter(supplierController));
     app.get("/api/health", (_req, res) =>

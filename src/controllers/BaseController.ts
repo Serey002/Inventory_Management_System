@@ -11,7 +11,9 @@ export abstract class BaseController {
     try {
       await action();
     } catch (error) {
-      this.sendResolvedError(res, error, fallbackMessage, fallbackStatusCode);
+      const message    = error instanceof Error    ? error.message    : fallbackMessage;
+      const statusCode = error instanceof AppError ? error.statusCode : fallbackStatusCode;
+      this.sendError(res, message, statusCode);
     }
   }
 
@@ -35,23 +37,29 @@ export abstract class BaseController {
     return error instanceof Error ? error.message : fallback;
   }
 
-  protected resolveStatusCode(
-    error: unknown,
-    fallbackStatusCode: number,
-  ): number {
-    return error instanceof AppError ? error.statusCode : fallbackStatusCode;
+  protected parseId(raw: string | string[] | undefined): number | null {
+    const str = Array.isArray(raw) ? raw[0] : raw;
+    if (!str) return null;
+    const id = parseInt(str, 10);
+    return isNaN(id) ? null : id;
   }
 
-  protected sendResolvedError(
-    res: Response,
-    error: unknown,
-    fallbackMessage: string,
-    fallbackStatusCode: number,
-  ): void {
-    this.sendError(
-      res,
-      this.resolveError(error, fallbackMessage),
-      this.resolveStatusCode(error, fallbackStatusCode),
-    );
+  protected parseQueryString(value: unknown): string | undefined {
+    return typeof value === "string" && value.trim() ? value.trim() : undefined;
+  }
+
+  protected parseQueryBoolean(value: unknown): boolean | undefined {
+    if (value === "true" || value === true) return true;
+    if (value === "false" || value === false) return false;
+    return undefined;
+  }
+
+  protected parseQueryPositiveInt(value: unknown, defaultValue: number = 1, max?: number): number {
+    const num = typeof value === "string" ? parseInt(value, 10) : typeof value === "number" ? value : NaN;
+    if (isNaN(num) || num <= 0) return defaultValue;
+    if (max && num > max) return max;
+    return num;
   }
 }
+
+export default BaseController;

@@ -34,17 +34,21 @@ export class SupplierController extends BaseController {
       500,
     );
 
-  getById = (req: Request, res: Response): Promise<void> =>
-    this.withValidId(res, req.params.id, (id) =>
-      this.handleRequest(
-        res,
-        async () => {
-          this.sendSuccess(res, await this.supplierService.getById(id));
-        },
-        "Failed to get supplier",
-        404,
-      ),
+  getById = (req: Request, res: Response): Promise<void> => {
+    const id = this.parseId(req.params.id);
+    if (id === null) {
+      this.sendError(res, "Invalid supplier ID");
+      return Promise.resolve();
+    }
+    return this.handleRequest(
+      res,
+      async () => {
+        this.sendSuccess(res, await this.supplierService.getById(id));
+      },
+      "Failed to get supplier",
+      404,
     );
+  };
 
   create = (req: Request, res: Response): Promise<void> => {
     const input = req.body as SupplierDTO;
@@ -64,120 +68,58 @@ export class SupplierController extends BaseController {
     );
   };
 
-  update = (req: Request, res: Response): Promise<void> =>
-    this.withValidId(res, req.params.id, (id) =>
-      this.handleRequest(
-        res,
-        async () => {
-          this.sendSuccess(
-            res,
-            await this.supplierService.update(
-              id,
-              req.body as UpdateSupplierInput,
-            ),
-          );
-        },
-        "Failed to update supplier",
-        400,
-      ),
-    );
-
-  delete = (req: Request, res: Response): Promise<void> =>
-    this.withValidId(res, req.params.id, (id) =>
-      this.handleRequest(
-        res,
-        async () => {
-          await this.supplierService.delete(id);
-          this.sendSuccess(res, {
-            message: "Supplier deactivated successfully",
-          });
-        },
-        "Failed to delete supplier",
-        400,
-      ),
-    );
-
-  private async withValidId(
-    res: Response,
-    rawId: string | string[] | undefined,
-    handler: (id: number) => Promise<void>
-  ): Promise<void> {
-    const id = this.parseId(rawId);
-    
+  update = (req: Request, res: Response): Promise<void> => {
+    const id = this.parseId(req.params.id);
     if (id === null) {
       this.sendError(res, "Invalid supplier ID");
-      return;
+      return Promise.resolve();
     }
-    
-    await handler(id);
-  }
+    return this.handleRequest(
+      res,
+      async () => {
+        this.sendSuccess(
+          res,
+          await this.supplierService.update(
+            id,
+            req.body as UpdateSupplierInput,
+          ),
+        );
+      },
+      "Failed to update supplier",
+      400,
+    );
+  };
 
-  private parseId(rawId: string | string[] | undefined): number | null {
-    const value = Array.isArray(rawId) ? rawId[0] : rawId;
-    
-    if (!value) {
-      return null;
+  delete = (req: Request, res: Response): Promise<void> => {
+    const id = this.parseId(req.params.id);
+    if (id === null) {
+      this.sendError(res, "Invalid supplier ID");
+      return Promise.resolve();
     }
-    
-    const id = parseInt(value, 10);
-    return Number.isNaN(id) ? null : id;
-  }
+    return this.handleRequest(
+      res,
+      async () => {
+        await this.supplierService.delete(id);
+        this.sendSuccess(res, { message: "Supplier deactivated successfully" });
+      },
+      "Failed to delete supplier",
+      400,
+    );
+  };
 
   private parseSearchFilters(req: Request): SupplierSearchFilters {
     const { query } = req;
-    
+
     return {
-      q: this.getFirstStringValue(query.q),
-      name: this.getFirstStringValue(query.name),
-      email: this.getFirstStringValue(query.email),
-      phone: this.getFirstStringValue(query.phone),
-      contactPerson: this.getFirstStringValue(query.contactPerson),
-      isActive: this.parseBoolean(query.isActive),
-      page: this.parsePositiveInteger(query.page, 1),
-      limit: this.parsePositiveInteger(query.limit, 1, 100),
+      q: this.parseQueryString(query.q),
+      name: this.parseQueryString(query.name),
+      email: this.parseQueryString(query.email),
+      phone: this.parseQueryString(query.phone),
+      contactPerson: this.parseQueryString(query.contactPerson),
+      isActive: this.parseQueryBoolean(query.isActive),
+      page: this.parseQueryPositiveInt(query.page, 1),
+      limit: this.parseQueryPositiveInt(query.limit, 1, 100),
     };
-  }
-
-  private getFirstStringValue(value: unknown): string | undefined {
-    const raw = Array.isArray(value) ? value[0] : value;
-    
-    if (typeof raw !== "string") return undefined;
-    
-    const trimmed = raw.trim();
-    return trimmed || undefined;
-  }
-
-  private parseBoolean(value: unknown): boolean | undefined {
-    const normalized = this.getFirstStringValue(value)?.toLowerCase();
-    
-    if (normalized === "true") return true;
-    if (normalized === "false") return false;
-    
-    return undefined;
-  }
-
-  private parsePositiveInteger(
-    value: unknown,
-    defaultValue: number,
-    maxValue?: number
-  ): number {
-    const raw = this.getFirstStringValue(value);
-    
-    if (!raw) {
-      return defaultValue;
-    }
-    
-    const parsed = parseInt(raw, 10);
-    
-    if (Number.isNaN(parsed) || parsed < 1) {
-      return defaultValue;
-    }
-
-    if (maxValue !== undefined) {
-      return Math.min(parsed, maxValue);
-    }
-    
-    return parsed;
   }
 }
 

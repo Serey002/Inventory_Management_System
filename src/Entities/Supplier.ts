@@ -6,28 +6,28 @@ import { StockMovement } from "./StockMovement";
 @Entity("suppliers")
 export class Supplier extends BaseEntity {
   @Column({ type: "varchar", length: 150 })
-  name!: string;
+  public name!: string;
 
   @Column({ type: "varchar", length: 150, nullable: true })
-  contactPerson!: string;
+  public contactPerson!: string | null;
 
   @Column({ type: "varchar", length: 150, nullable: true, unique: true })
-  email!: string;
+  public email!: string | null;
 
   @Column({ type: "varchar", length: 20, nullable: true })
-  phone!: string;
+  public phone!: string | null;
 
   @Column({ type: "text", nullable: true })
-  address!: string;
+  public address!: string | null;
 
   @Column({ type: "boolean", default: true })
-  isActive!: boolean;
+  public isActive!: boolean;
 
   @OneToMany(() => Product, (product) => product.supplier)
-  products!: Product[];
+  public products!: Product[];
 
   @OneToMany(() => StockMovement, (sm) => sm.supplier)
-  stockMovements!: StockMovement[];
+  public stockMovements!: StockMovement[];
 }
 
 export default Supplier;

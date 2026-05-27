@@ -4,10 +4,11 @@ import { BaseAuthService } from "./BaseAuthService";
 import { UserRepository } from "../repositories/UserRepository";
 import { RoleRepository } from "../repositories/RoleRepository";
 import { Users } from "../Entities/Users";
+import { UnauthorizedError } from "../errors/AppError";
 import { RegisterDTO, AuthResult, JwtPayload, SafeUser } from "../types/authType";
+
 export class AuthService extends BaseAuthService {
   private static readonly SALT_ROUNDS = 12;
-
   private readonly jwtSecret: string;
   private readonly jwtExpiresIn: string;
 
@@ -21,18 +22,21 @@ export class AuthService extends BaseAuthService {
     this.jwtExpiresIn  = process.env.JWT_EXPIRES_IN ?? "24h";
   }
 
-  // ── Public contract (implements BaseAuthService) ──────────────────────────
-
+  // Login requires email and password, returns token and user info
   async login(email: string, password: string): Promise<AuthResult> {
+    if (!email || !password) throw new UnauthorizedError("Email and password are required");
+
     const user = await this.userRepository.findByEmail(email);
-    if (!user || !user.isActive) throw new Error("Invalid credentials");
+    if (!user) throw new UnauthorizedError("Email not found");
+    if (!user.isActive) throw new UnauthorizedError("Account is inactive");
 
     const passwordValid = await bcrypt.compare(password, user.password);
-    if (!passwordValid) throw new Error("Invalid credentials");
+    if (!passwordValid) throw new UnauthorizedError("Your password is incorrect");
 
     return { token: this.generateToken(user), user: this.sanitizeUser(user) };
   }
 
+  // Registration requires name, email, password, and optional roleId
   async register(data: RegisterDTO): Promise<AuthResult> {
     if (await this.userRepository.emailExists(data.email)) {
       throw new Error("Email already in use");
@@ -55,7 +59,6 @@ export class AuthService extends BaseAuthService {
     const saved    = await this.userRepository.save(user);
     const fullUser = await this.userRepository.findByEmail(saved.email);
     if (!fullUser) throw new Error("User creation failed");
-
     return { token: this.generateToken(fullUser), user: this.sanitizeUser(fullUser) };
   }
 
@@ -63,14 +66,7 @@ export class AuthService extends BaseAuthService {
     return jwt.verify(token, this.jwtSecret) as JwtPayload;
   }
 
-  async getProfile(userId: number): Promise<SafeUser> {
-    const user = await this.userRepository.findById(userId);
-    if (!user) throw new Error("User not found");
-    return this.sanitizeUser(user);
-  }
-
   // ── Private helpers ───────────────────────────────────────────────────────
-
   private generateToken(user: Users): string {
     const payload: JwtPayload = {
       userId: user.id,

@@ -5,108 +5,73 @@ import {
   SupplierSearchFilters,
   UpdateSupplierInput,
 } from "../types/supplierType";
+class SupplierController extends BaseController {
+  private readonly supplierService: SupplierService;
 
-export class SupplierController extends BaseController {
-  constructor(private readonly supplierService: SupplierService) {
+  constructor(supplierService: SupplierService) {
     super();
+    this.supplierService = supplierService;
   }
 
-  getAll = (_req: Request, res: Response): Promise<void> =>
-    this.handleRequest(
-      res,
-      async () => {
-        this.sendSuccess(res, await this.supplierService.getAll());
-      },
-      "Failed to get suppliers",
-      500,
-    );
+  // GET /suppliers
+  getAll = async (_req: Request, res: Response): Promise<void> => {
+    await this.handleRequest( res, async () => {
+      this.sendSuccess(res, await this.supplierService.getAll());}, "Failed to get suppliers", 500);
+  };
 
-  search = (req: Request, res: Response): Promise<void> =>
-    this.handleRequest(
-      res,
-      async () => {
-        this.sendSuccess(
-          res,
-          await this.supplierService.search(this.parseSearchFilters(req)),
-        );
-      },
-      "Failed to search suppliers",
-      500,
-    );
+  // GET /suppliers/search
+  search = async (req: Request, res: Response): Promise<void> => {
+    await this.handleRequest( res, async () => {
+      this.sendSuccess(res, await this.supplierService.search(this.parseSearchFilters(req)));}, "Failed to search suppliers", 500);
+  };
 
-  getById = (req: Request, res: Response): Promise<void> => {
+  // GET /suppliers/:id
+  getById = async (req: Request, res: Response): Promise<void> => {
     const id = this.parseId(req.params.id);
     if (id === null) {
       this.sendError(res, "Invalid supplier ID");
-      return Promise.resolve();
+      return;
     }
-    return this.handleRequest(
-      res,
-      async () => {
-        this.sendSuccess(res, await this.supplierService.getById(id));
-      },
-      "Failed to get supplier",
-      404,
-    );
+    await this.handleRequest( res, async () => {
+      this.sendSuccess(res, await this.supplierService.getById(id));}, "Failed to get supplier", 404);
   };
 
-  create = (req: Request, res: Response): Promise<void> => {
+  // POST /suppliers
+  create = async (req: Request, res: Response): Promise<void> => {
     const input = req.body as SupplierDTO;
 
     if (!input.name?.trim()) {
       this.sendError(res, "Supplier name is required");
-      return Promise.resolve();
+      return;
     }
-
-    return this.handleRequest(
-      res,
-      async () => {
-        this.sendCreated(res, await this.supplierService.create(input));
-      },
-      "Failed to create supplier",
-      400,
-    );
+    await this.handleRequest( res, async () => {
+      this.sendCreated(res, await this.supplierService.create(input));}, "Failed to create supplier", 400);
   };
 
-  update = (req: Request, res: Response): Promise<void> => {
+  // PUT /suppliers/:id
+  update = async (req: Request, res: Response): Promise<void> => {
     const id = this.parseId(req.params.id);
     if (id === null) {
       this.sendError(res, "Invalid supplier ID");
-      return Promise.resolve();
+      return;
     }
-    return this.handleRequest(
-      res,
-      async () => {
-        this.sendSuccess(
-          res,
-          await this.supplierService.update(
-            id,
-            req.body as UpdateSupplierInput,
-          ),
-        );
-      },
-      "Failed to update supplier",
-      400,
-    );
+    await this.handleRequest( res, async () => {
+      this.sendSuccess(res, await this.supplierService.update(id, req.body as UpdateSupplierInput));}, "Failed to update supplier", 400);
   };
 
-  delete = (req: Request, res: Response): Promise<void> => {
+  // DELETE /suppliers/:id
+  delete = async (req: Request, res: Response): Promise<void> => {
     const id = this.parseId(req.params.id);
     if (id === null) {
       this.sendError(res, "Invalid supplier ID");
-      return Promise.resolve();
+      return;
     }
-    return this.handleRequest(
-      res,
-      async () => {
-        await this.supplierService.delete(id);
-        this.sendSuccess(res, { message: "Supplier deactivated successfully" });
-      },
-      "Failed to delete supplier",
-      400,
-    );
-  };
+    await this.handleRequest( res, async () => {
+      await this.supplierService.delete(id);
+      this.sendSuccess(res, { message: "Supplier deactivated successfully" });}, "Failed to delete supplier", 400);
+  }
 
+  // ── Private helpers ───────────────────────────────────────────────────────
   private parseSearchFilters(req: Request): SupplierSearchFilters {
     const { query } = req;
 

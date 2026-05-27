@@ -11,7 +11,6 @@ import {
 } from "../types/supplierType";
 
 export type SupplierDTO = CreateSupplierInput;
-
 export class SupplierService extends AbstractManagementService<
   Supplier,
   SupplierDTO,
@@ -67,7 +66,7 @@ export class SupplierService extends AbstractManagementService<
     const exists = await this.supplierRepository.emailExists(normalized, excludeId);
     if (exists) throw new ConflictError("Supplier email already exists");
   }
-
+  
   private applyProfile(supplier: Supplier, data: SupplierProfileInput): Supplier {
     if (data.name !== undefined) {
       const name = data.name.trim();
@@ -80,7 +79,6 @@ export class SupplierService extends AbstractManagementService<
     if (data.phone !== undefined)         supplier.phone = data.phone?.trim() || null;
     if (data.address !== undefined)       supplier.address = data.address?.trim() || null;
     if (data.isActive !== undefined)      supplier.isActive = data.isActive;
-
     return supplier;
   }
 

@@ -4,6 +4,7 @@ import { BaseAuthService } from "./BaseAuthService";
 import { UserRepository } from "../repositories/UserRepository";
 import { RoleRepository } from "../repositories/RoleRepository";
 import { Users } from "../Entities/Users";
+import { UnauthorizedError } from "../errors/AppError";
 import { RegisterDTO, AuthResult, JwtPayload, SafeUser } from "../types/authType";
 
 export class AuthService extends BaseAuthService {
@@ -23,13 +24,14 @@ export class AuthService extends BaseAuthService {
 
   // Login requires email and password, returns token and user info
   async login(email: string, password: string): Promise<AuthResult> {
-    if (!email || !password) throw new Error("Email and password are required");
+    if (!email || !password) throw new UnauthorizedError("Email and password are required");
 
     const user = await this.userRepository.findByEmail(email);
-    if (!user || !user.isActive) throw new Error("Invalid credentials");
+    if (!user) throw new UnauthorizedError("Email not found");
+    if (!user.isActive) throw new UnauthorizedError("Account is inactive");
 
     const passwordValid = await bcrypt.compare(password, user.password);
-    if (!passwordValid) throw new Error("Invalid credentials");
+    if (!passwordValid) throw new UnauthorizedError("Your password is incorrect");
 
     return { token: this.generateToken(user), user: this.sanitizeUser(user) };
   }

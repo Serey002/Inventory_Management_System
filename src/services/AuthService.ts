@@ -5,6 +5,7 @@ import { UserRepository } from "../repositories/UserRepository";
 import { RoleRepository } from "../repositories/RoleRepository";
 import { Users } from "../Entities/Users";
 import { RegisterDTO, AuthResult, JwtPayload, SafeUser } from "../types/authType";
+
 export class AuthService extends BaseAuthService {
   private static readonly SALT_ROUNDS = 12;
   private readonly jwtSecret: string;
@@ -23,7 +24,7 @@ export class AuthService extends BaseAuthService {
   // Login requires email and password, returns token and user info
   async login(email: string, password: string): Promise<AuthResult> {
     if (!email || !password) throw new Error("Email and password are required");
-    
+
     const user = await this.userRepository.findByEmail(email);
     if (!user || !user.isActive) throw new Error("Invalid credentials");
 

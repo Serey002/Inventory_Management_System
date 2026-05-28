@@ -23,7 +23,15 @@ import { SupplierController } from "./controllers/SupplierController";
 import { SupplierRepository } from "./repositories/SupplierRepository";
 import { SupplierService } from "./services/SupplierService";
 import { createSupplierRouter } from "./routes/supplierRoutes";
+import { CategoryController } from "./controllers/CategoryController";
+import { createCategoryRouter } from "./routes/categoryRoutes";
+import { CategoryRepository } from "./repositories/CategoryRepository";
 import { seedPermissions } from "./seeders/permissionSeeder";
+import { createWarehouseRouter } from "./routes/warehouseRoutes";
+import { WarehouseController } from "./controllers/WarehouseController";
+import { WarehouseService } from "./services/WarehouseService";
+import { WarehouseRepository } from "./repositories/WarehouseRepository";
+
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -49,22 +57,24 @@ AppDataSource.initialize()
     const permissionMiddleware = createPermissionMiddleware;
     const authMiddleware = createAuthMiddleware(authService);
     const productRepository = new ProductRepository(AppDataSource);
+    const categoryRepository = new CategoryRepository(AppDataSource);
     const productService = new ProductService(productRepository);
     const productController = new ProductController(productService);
     const supplierRepository = new SupplierRepository(AppDataSource);
     const supplierService = new SupplierService(supplierRepository);
     const supplierController = new SupplierController(supplierService);
+    const categoryController = new CategoryController(categoryRepository);
+    const warehouseRepository = new WarehouseRepository(AppDataSource);
+    const warehouseService = new WarehouseService(warehouseRepository);
+    const warehouseController = new WarehouseController(warehouseService);
 
-    app.use("/api/auth", createAuthRouter(authController));
-    app.use(
-      "/api/products",
-      createProductRouter(productController, authMiddleware, createPermissionMiddleware),
-    );
-    app.use(
-      "/api/users",
-      createUserRouter(userController, authMiddleware, createPermissionMiddleware),
-    );
-    app.use("/api/suppliers", createSupplierRouter(supplierController, authMiddleware));
+    // ── Routes ───────────────────────────────────────────────────────────────
+    app.use("/api/auth",  createAuthRouter(authController));
+    app.use("/api/products", createProductRouter(productController));
+    app.use("/api/suppliers", createSupplierRouter(supplierController));
+    app.use("/api/categories", createCategoryRouter(categoryController));
+    app.use("/api/users", createUserRouter(userController, authMiddleware, permissionMiddleware));
+    app.use("/api/warehouses", createWarehouseRouter(warehouseController, authMiddleware, permissionMiddleware));
     app.get("/api/health", (_req, res) =>
       res.json({ status: "ok", timestamp: new Date().toISOString() }),
     );

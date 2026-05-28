@@ -1,6 +1,7 @@
-import { Entity, Column, OneToMany } from "typeorm";
+import { Entity, Column, OneToMany, ManyToMany, JoinTable } from "typeorm";
 import { BaseEntity } from "./BaseEntity";
 import { Users } from "./Users";
+import { Permission } from "./Permissions";
 
 /**
  * Represents a permission role (e.g. ADMIN, STAFF).
@@ -16,6 +17,20 @@ export class Role extends BaseEntity {
 
   @OneToMany(() => Users, (user) => user.role)
   users!: Users[];
+
+  @ManyToMany(() => Permission, (permission) => permission.roles)
+  @JoinTable({
+    name: "role_permissions",
+    joinColumn: {
+      name: "roleId",
+      referencedColumnName: "id",
+    },
+    inverseJoinColumn: {
+      name: "permissionId",
+      referencedColumnName: "id",
+    },
+  })
+  permissions!: Permission[];
 }
 
 export default Role;

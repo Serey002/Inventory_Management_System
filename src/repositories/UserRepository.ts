@@ -11,14 +11,17 @@ export class UserRepository extends BaseRepository<Users> {
     return this.repository
       .createQueryBuilder("user")
       .addSelect("user.password")
+      .leftJoinAndSelect("user.role", "role")
+      .leftJoinAndSelect("role.permissions", "permission")
       .where("user.email = :email", { email })
+      .orderBy("permission.name", "ASC")
       .getOne();
   }
 
   async findActiveUsers(): Promise<Users[]> {
     return this.repository.find({
       where: { isActive: true },
-      relations: { role: true },
+      relations: { role: { permissions: true } },
     });
   }
 

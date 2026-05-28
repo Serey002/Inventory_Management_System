@@ -5,7 +5,7 @@ import { UserRepository } from "../repositories/UserRepository";
 import { RoleRepository } from "../repositories/RoleRepository";
 import { Users } from "../Entities/Users";
 import { UnauthorizedError } from "../errors/AppError";
-import { RegisterDTO, AuthResult, JwtPayload, SafeUser } from "../types/authType";
+import { RegisterDTO, AuthResult, JwtPayload, SafeRole, SafeUser } from "../types/authType";
 
 export class AuthService extends BaseAuthService {
   private static readonly SALT_ROUNDS = 12;
@@ -71,7 +71,7 @@ export class AuthService extends BaseAuthService {
     const payload: JwtPayload = {
       userId: user.id,
       email:  user.email,
-      role:   user.role?.name ?? null,
+      role:   this.sanitizeRole(user),
     };
     return jwt.sign(payload, this.jwtSecret, {
       expiresIn: this.jwtExpiresIn,
@@ -83,8 +83,18 @@ export class AuthService extends BaseAuthService {
       id:       user.id,
       name:     user.name,
       email:    user.email,
-      role:     user.role?.name ?? null,
+      role:     this.sanitizeRole(user),
       isActive: user.isActive,
+    };
+  }
+
+  private sanitizeRole(user: Users): SafeRole | null {
+    if (!user.role) return null;
+
+    return {
+      id: user.role.id,
+      name: user.role.name,
+      permissions: (user.role.permissions ?? []).map((permission) => permission.name),
     };
   }
 }

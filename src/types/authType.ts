@@ -18,8 +18,14 @@ export interface SafeUser {
   id: number;
   name: string;
   email: string;
-  role: string | null;
+  role: SafeRole | null;
   isActive: boolean;
+}
+
+export interface SafeRole {
+  id: number;
+  name: string;
+  permissions: string[];
 }
 
 export interface AuthResult {
@@ -27,12 +33,27 @@ export interface AuthResult {
   user: SafeUser;
 }
 
+// ── Error Response ────────────────────────────────────────────────────────────
+
+export interface ErrorResponse {
+  success: false;
+  message: string;
+  code?: string;
+  statusCode?: number;
+}
+
+export interface SuccessResponse<T> {
+  success: true;
+  message?: string;
+  data: T;
+}
+
 // ── JWT ───────────────────────────────────────────────────────────────────────
 
 export interface JwtPayload {
   userId: number;
   email: string;
-  role: string | null;
+  role: SafeRole | null;
 }
 
 // ── Express augmentation ──────────────────────────────────────────────────────

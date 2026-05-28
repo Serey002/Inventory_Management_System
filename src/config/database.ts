@@ -12,10 +12,12 @@ import { Inventory } from "../Entities/Inventories";
 import { StockMovement } from "../Entities/StockMovement";
 import { Sale } from "../Entities/Sale";
 import { SaleItem } from "../Entities/SaleItem";
+import { Permission } from "../Entities/Permissions";
 
 dotenv.config();
 
 const isDev = process.env.NODE_ENV === "development";
+const shouldDropSchema = process.env.DB_DROP_SCHEMA === "true";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -26,7 +28,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME || "ims_db",
   synchronize: isDev,
   logging: isDev,
-  dropSchema: isDev,
+  dropSchema: shouldDropSchema,
   entities: [
     Role,
     Users,
@@ -38,6 +40,7 @@ export const AppDataSource = new DataSource({
     StockMovement,
     Sale,
     SaleItem,
+    Permission,
   ],
   migrations: [],
   subscribers: [],

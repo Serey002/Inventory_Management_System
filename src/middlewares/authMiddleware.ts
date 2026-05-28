@@ -1,13 +1,26 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { JwtPayload } from "../types/authType";
+import { JwtPayload, ErrorResponse } from "../types/authType";
 import { BaseAuthService } from "../services/BaseAuthService";
+
+type ErrorCode = "NO_TOKEN" | "TOKEN_EXPIRED" | "INVALID_TOKEN" | "AUTH_FAILED";
+
+interface AuthErrorResponse extends ErrorResponse {
+  code: ErrorCode;
+}
+
 abstract class BaseAuthMiddleware {
   public handle = (req: Request, res: Response, next: NextFunction): void => {
     const token = this.extractToken(req);
 
     if (!token) {
-      res.status(401).json({ success: false, message: "No token provided" });
+      const response: AuthErrorResponse = {
+        success: false,
+        message: "No token provided",
+        code: "NO_TOKEN",
+        statusCode: 401,
+      };
+      res.status(401).json(response);
       return;
     }
 
@@ -15,7 +28,15 @@ abstract class BaseAuthMiddleware {
       req.user = this.authenticate(token);
       next();
     } catch (error) {
-      res.status(401).json({ success: false, message: this.resolveError(error) });
+      const { message, code } = this.resolveError(error);
+      const statusCode = error instanceof jwt.TokenExpiredError ? 401 : 401;
+      const response: AuthErrorResponse = {
+        success: false,
+        message,
+        code,
+        statusCode,
+      };
+      res.status(statusCode).json(response);
     }
   };
 
@@ -26,10 +47,14 @@ abstract class BaseAuthMiddleware {
     return header?.startsWith("Bearer ") ? header.slice(7) : null;
   }
 
-  protected resolveError(error: unknown): string {
-    if (error instanceof jwt.TokenExpiredError) return "Token has expired";
-    if (error instanceof jwt.JsonWebTokenError)  return "Invalid token";
-    return "Authentication failed";
+  protected resolveError(error: unknown): { message: string; code: ErrorCode } {
+    if (error instanceof jwt.TokenExpiredError) {
+      return { message: "Token has expired", code: "TOKEN_EXPIRED" };
+    }
+    if (error instanceof jwt.JsonWebTokenError) {
+      return { message: "Invalid token", code: "INVALID_TOKEN" };
+    }
+    return { message: "Authentication failed", code: "AUTH_FAILED" };
   }
 }
 

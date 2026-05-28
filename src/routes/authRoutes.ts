@@ -1,9 +1,7 @@
 import { Router } from "express";
 import { AuthController } from "../controllers/AuthController";
 
-export function createAuthRouter(
-  authController: AuthController,
-): Router {
+export function createAuthRouter(authController: AuthController): Router {
   const router = Router();
 
   router.post("/login",    authController.login);
@@ -11,3 +9,5 @@ export function createAuthRouter(
 
   return router;
 }
+
+export default createAuthRouter;

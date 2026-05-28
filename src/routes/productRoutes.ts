@@ -12,10 +12,10 @@ export function createProductRouter(
       ? [authMiddleware, permissionMiddleware(permission)]
       : [];
 
-  router.get("/", ...requirePermission("product:view"), productController.getAll);
-  router.get("/:id", ...requirePermission("product:view"), productController.getById);
-  router.post("/", ...requirePermission("product:create"), productController.create);
-  router.put("/:id", ...requirePermission("product:update"), productController.update);
+  router.get("/",     ...requirePermission("product:view"),   productController.getAll);
+  router.get("/:id",  ...requirePermission("product:view"),   productController.getById);
+  router.post("/",    ...requirePermission("product:create"),  productController.create);
+  router.put("/:id",  ...requirePermission("product:update"),  productController.update);
   router.delete("/:id", ...requirePermission("product:delete"), productController.delete);
 
   return router;

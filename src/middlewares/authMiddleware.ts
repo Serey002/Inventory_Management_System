@@ -10,17 +10,11 @@ interface AuthErrorResponse extends ErrorResponse {
 }
 
 abstract class BaseAuthMiddleware {
-  public handle = (req: Request, res: Response, next: NextFunction): void => {
+  handle = (req: Request, res: Response, next: NextFunction): void => {
     const token = this.extractToken(req);
 
     if (!token) {
-      const response: AuthErrorResponse = {
-        success: false,
-        message: "No token provided",
-        code: "NO_TOKEN",
-        statusCode: 401,
-      };
-      res.status(401).json(response);
+      res.status(401).json({ success: false, message: "No token provided", code: "NO_TOKEN", statusCode: 401 } satisfies AuthErrorResponse);
       return;
     }
 
@@ -29,14 +23,7 @@ abstract class BaseAuthMiddleware {
       next();
     } catch (error) {
       const { message, code } = this.resolveError(error);
-      const statusCode = error instanceof jwt.TokenExpiredError ? 401 : 401;
-      const response: AuthErrorResponse = {
-        success: false,
-        message,
-        code,
-        statusCode,
-      };
-      res.status(statusCode).json(response);
+      res.status(401).json({ success: false, message, code, statusCode: 401 } satisfies AuthErrorResponse);
     }
   };
 
@@ -48,13 +35,9 @@ abstract class BaseAuthMiddleware {
   }
 
   protected resolveError(error: unknown): { message: string; code: ErrorCode } {
-    if (error instanceof jwt.TokenExpiredError) {
-      return { message: "Token has expired", code: "TOKEN_EXPIRED" };
-    }
-    if (error instanceof jwt.JsonWebTokenError) {
-      return { message: "Invalid token", code: "INVALID_TOKEN" };
-    }
-    return { message: "Authentication failed", code: "AUTH_FAILED" };
+    if (error instanceof jwt.TokenExpiredError)  return { message: "Token has expired",       code: "TOKEN_EXPIRED" };
+    if (error instanceof jwt.JsonWebTokenError)  return { message: "Invalid token",           code: "INVALID_TOKEN" };
+                                                 return { message: "Authentication failed",   code: "AUTH_FAILED"   };
   }
 }
 
@@ -70,3 +53,5 @@ class JwtAuthMiddleware extends BaseAuthMiddleware {
 
 export const createAuthMiddleware = (authService: BaseAuthService) =>
   new JwtAuthMiddleware(authService).handle;
+
+export default createAuthMiddleware;

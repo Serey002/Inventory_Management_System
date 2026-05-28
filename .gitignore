@@ -32,3 +32,6 @@ temp/
 
 # Sequelize
 database.sqlite
+
+# Ignore security 
+SECURITY.md

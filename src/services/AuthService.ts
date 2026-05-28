@@ -49,11 +49,25 @@ export class AuthService extends BaseAuthService {
     user.isActive     = true;
     user.lastLoginAt  = null;
 
+    // Only allow staff role for registration
     if (data.roleId) {
       const role = await this.roleRepository.findById(data.roleId);
       if (!role) throw new Error("Role not found");
+      
+      // Prevent admin role registration
+      if (role.name === "admin") {
+        throw new Error("Admin role cannot be assigned during registration");
+      }
+      
       user.role   = role;
       user.roleId = role.id;
+    } else {
+      // Default to staff role if no role is provided
+      const staffRole = await this.roleRepository.findByName("staff");
+      if (staffRole) {
+        user.role   = staffRole;
+        user.roleId = staffRole.id;
+      }
     }
 
     const saved    = await this.userRepository.save(user);

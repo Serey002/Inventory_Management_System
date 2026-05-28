@@ -19,6 +19,9 @@ import { SupplierController } from "./controllers/SupplierController";
 import { SupplierRepository } from "./repositories/SupplierRepository";
 import { SupplierService } from "./services/SupplierService";
 import { createSupplierRouter } from "./routes/supplierRoutes";
+import { CategoryController } from "./controllers/CategoryController";
+import { createCategoryRouter } from "./routes/categoryRoutes";
+import { CategoryRepository } from "./repositories/CategoryRepository";
 
 const app  = express();
 const PORT = process.env.PORT || 3001;
@@ -38,16 +41,19 @@ AppDataSource.initialize()
     const userService    = new UserService(userRepository);
     const authController = new AuthController(authService);
     const productRepository = new ProductRepository(AppDataSource);
+    const categoryRepository = new CategoryRepository(AppDataSource);
     const productService = new ProductService(productRepository);
     const productController = new ProductController(productService);
     const supplierRepository = new SupplierRepository(AppDataSource);
     const supplierService = new SupplierService(supplierRepository);
     const supplierController = new SupplierController(supplierService);
+    const categoryController = new CategoryController(categoryRepository);
 
     // ── Routes ───────────────────────────────────────────────────────────────
     app.use("/api/auth",  createAuthRouter(authController));
     app.use("/api/products", createProductRouter(productController));
     app.use("/api/suppliers", createSupplierRouter(supplierController));
+    app.use("/api/categories", createCategoryRouter(categoryController));
     app.get("/api/health", (_req, res) =>
       res.json({ status: "ok", timestamp: new Date().toISOString() }),
     );

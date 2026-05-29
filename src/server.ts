@@ -74,6 +74,7 @@ AppDataSource.initialize()
     app.use("/api/products", createProductRouter(productController, authMiddleware, createPermissionMiddleware),);
     app.use("/api/users", createUserRouter(userController, authMiddleware, createPermissionMiddleware),);
     app.use("/api/suppliers", createSupplierRouter(supplierController, authMiddleware));
+    app.use("/api/users", createUserRouter(userController, authMiddleware, permissionMiddleware));
     app.use("/api/warehouses", createWarehouseRouter(warehouseController, authMiddleware, permissionMiddleware));
     app.get("/api/health", (_req, res) =>
       res.json({ status: "ok", timestamp: new Date().toISOString() }),

@@ -19,7 +19,6 @@ export class CategoryController extends BaseController {
   };
   //   GET BY ID
 
-
   getById = async (req: Request, res: Response): Promise<void> => {
     const id = parseInt(req.params.id as string);
     if (isNaN(id)) {

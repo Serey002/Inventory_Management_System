@@ -27,6 +27,11 @@ import { CategoryController } from "./controllers/CategoryController";
 import { createCategoryRouter } from "./routes/categoryRoutes";
 import { CategoryRepository } from "./repositories/CategoryRepository";
 import { seedPermissions } from "./seeders/permissionSeeder";
+import { createWarehouseRouter } from "./routes/warehouseRoutes";
+import { WarehouseController } from "./controllers/WarehouseController";
+import { WarehouseService } from "./services/WarehouseService";
+import { WarehouseRepository } from "./repositories/WarehouseRepository";
+
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -59,6 +64,9 @@ AppDataSource.initialize()
     const supplierService = new SupplierService(supplierRepository);
     const supplierController = new SupplierController(supplierService);
     const categoryController = new CategoryController(categoryRepository);
+    const warehouseRepository = new WarehouseRepository(AppDataSource);
+    const warehouseService = new WarehouseService(warehouseRepository);
+    const warehouseController = new WarehouseController(warehouseService);
 
     // ── Routes ───────────────────────────────────────────────────────────────
     app.use("/api/auth",  createAuthRouter(authController));
@@ -66,6 +74,7 @@ AppDataSource.initialize()
     app.use("/api/products", createProductRouter(productController, authMiddleware, createPermissionMiddleware),);
     app.use("/api/users", createUserRouter(userController, authMiddleware, createPermissionMiddleware),);
     app.use("/api/suppliers", createSupplierRouter(supplierController, authMiddleware));
+    app.use("/api/warehouses", createWarehouseRouter(warehouseController, authMiddleware, permissionMiddleware));
     app.get("/api/health", (_req, res) =>
       res.json({ status: "ok", timestamp: new Date().toISOString() }),
     );

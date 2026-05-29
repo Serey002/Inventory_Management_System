@@ -15,6 +15,10 @@ export const PERMISSION_SEEDS: Array<Pick<Permission, "name" | "description">> =
   { name: "user:delete",       description: "Delete users"       },
   { name: "inventory:view",    description: "View inventory"     },
   { name: "inventory:update",  description: "Update inventory"   },
+  { name: "warehouse:create",  description: "Create warehouses"  },
+  { name: "warehouse:update",  description: "Update warehouses"  },
+  { name: "warehouse:delete",  description: "Delete warehouses"  },
+  { name: "warehouse:view",    description: "View warehouses"    },
 ];
 
 const ROLE_PERMISSION_NAMES: Record<string, string[]> = {
@@ -27,6 +31,9 @@ const ROLE_PERMISSION_NAMES: Record<string, string[]> = {
     "sale:view",
     "inventory:view",
     "inventory:update",
+    "warehouse:view",
+    "warehouse:create",
+    "warehouse:update",
   ],
 };
 
@@ -34,7 +41,12 @@ export async function seedPermissions(dataSource: DataSource): Promise<void> {
   const permissionRepository = dataSource.getRepository(Permission);
   const roleRepository = dataSource.getRepository(Role);
 
-  await permissionRepository.upsert(PERMISSION_SEEDS, ["name"]);
+  const existing = await permissionRepository.find();
+  const existingNames = new Set(existing.map((p) => p.name));
+  const toInsert = PERMISSION_SEEDS.filter((p) => !existingNames.has(p.name));
+  if (toInsert.length > 0) {
+    await permissionRepository.insert(toInsert);
+  }
 
   const permissions = await permissionRepository.find();
   const byName = new Map(permissions.map((p) => [p.name, p]));
@@ -44,15 +56,10 @@ export async function seedPermissions(dataSource: DataSource): Promise<void> {
     const permissionNames = ROLE_PERMISSION_NAMES[role.name.toLowerCase()];
     if (!permissionNames) continue;
 
-    const existing = new Set((role.permissions ?? []).map((p) => p.name));
-    const toAdd = permissionNames
-      .filter((name) => !existing.has(name))
+    role.permissions = permissionNames
       .map((name) => byName.get(name))
       .filter((p): p is Permission => Boolean(p));
 
-    if (toAdd.length === 0) continue;
-
-    role.permissions = [...(role.permissions ?? []), ...toAdd];
     await roleRepository.save(role);
   }
 }

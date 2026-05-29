@@ -1,14 +1,17 @@
-import { Router } from "express";
+import { RequestHandler, Router } from "express";
 import { CategoryController } from "../controllers/CategoryController";
 
-export function createCategoryRouter(categoryController: CategoryController): Router {
+export function createCategoryRouter(
+  categoryController: CategoryController,
+  authMiddleware: RequestHandler,
+): Router {
   const router = Router();
 
-  router.get("/", categoryController.getAll);
-  router.get("/:id", categoryController.getById);
-  router.post("/", categoryController.create);
-  router.put("/:id", categoryController.update);
-  router.delete("/:id", categoryController.delete);
+  router.get("/", authMiddleware, categoryController.getAll);
+  router.get("/:id", authMiddleware, categoryController.getById);
+  router.post("/", authMiddleware, categoryController.create);
+  router.put("/:id", authMiddleware, categoryController.update);
+  router.delete("/:id", authMiddleware, categoryController.delete);
 
   return router;
 }

@@ -10,6 +10,7 @@ import { RoleRepository }   from "./repositories/RoleRepository";
 import { AuthService }      from "./services/AuthService";
 import { AuthController }   from "./controllers/AuthController";
 import { createAuthRouter } from "./routes/authRoutes";
+import { createAuthMiddleware } from "./middlewares/authMiddleware";
 import { ProductController } from "./controllers/ProductController";
 import { createProductRouter } from "./routes/productRoutes";
 import { ProductRepository } from "./repositories/ProductRepository";
@@ -38,6 +39,7 @@ AppDataSource.initialize()
     const userRepository = new UserRepository(AppDataSource);
     const roleRepository = new RoleRepository(AppDataSource);
     const authService    = new AuthService(userRepository, roleRepository);
+    const authMiddleware = createAuthMiddleware(authService);
     const userService    = new UserService(userRepository);
     const authController = new AuthController(authService);
     const productRepository = new ProductRepository(AppDataSource);
@@ -53,7 +55,7 @@ AppDataSource.initialize()
     app.use("/api/auth",  createAuthRouter(authController));
     app.use("/api/products", createProductRouter(productController));
     app.use("/api/suppliers", createSupplierRouter(supplierController));
-    app.use("/api/categories", createCategoryRouter(categoryController));
+    app.use("/api/categories", createCategoryRouter(categoryController, authMiddleware));
     app.get("/api/health", (_req, res) =>
       res.json({ status: "ok", timestamp: new Date().toISOString() }),
     );
